@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.invert-logo {
+    filter: invert(100%) brightness(0);
+}
