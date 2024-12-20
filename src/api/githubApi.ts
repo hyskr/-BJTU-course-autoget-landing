@@ -11,7 +11,7 @@ export async function fetchLatestRelease(): Promise<ReleaseData> {
   const assets: PlatformAsset[] = data.assets.map(asset => ({
     name: asset.name,
     downloadUrl: asset.browser_download_url,
-    mirrorUrl: `https://ghgo.xyz${asset.browser_download_url}`,
+    mirrorUrl: `https://ghgo.xyz/${asset.browser_download_url}`,
     githubUrl: data.html_url,
     size: (asset.size / (1024 * 1024)).toFixed(2)
   }));
