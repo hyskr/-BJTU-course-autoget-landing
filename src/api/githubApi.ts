@@ -1,14 +1,14 @@
 import { ReleaseData, PlatformAsset } from '../types';
 
-export async function fetchLatestRelease(): Promise<ReleaseData> {
-  const response = await fetch('https://api.github.com/repos/hyskr/BJTU-course-autoget-program/releases/latest');
+export async function fetchLatestRelease(repo: string): Promise<ReleaseData> {
+  const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
 
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
 
   const data = await response.json();
-  const assets: PlatformAsset[] = data.assets.map(asset => ({
+  const assets: PlatformAsset[] = data.assets.map((asset: { name: any; browser_download_url: any; size: number; }) => ({
     name: asset.name,
     downloadUrl: asset.browser_download_url,
     mirrorUrl: `https://ghgo.xyz/${asset.browser_download_url}`,

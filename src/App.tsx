@@ -1,50 +1,47 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { Background } from './components/Background';
-import { DownloadButton } from './components/DownloadButton';
 import { Title } from './components/Title';
-import { VersionInfo } from './components/VersionInfo';
 import { fetchLatestRelease } from './api/githubApi';
 import type { ReleaseData } from './types';
+import { apps } from './config/apps';
+import { AppCard } from './components/AppCard';
 
 export function App() {
-  const [releaseData, setReleaseData] = useState<ReleaseData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [releases, setReleases] = useState<Record<string, ReleaseData | null>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
 
   useEffect(() => {
-    fetchLatestRelease()
-      .then(setReleaseData)
-      .catch(err => setError(err.message));
+    apps.forEach(app => {
+      fetchLatestRelease(app.repo)
+        .then(release => {
+          console.log(release);
+          setReleases(prev => ({ ...prev, [app.id]: release }));
+        })
+        .catch(err => {
+          setErrors(prev => ({ ...prev, [app.id]: err.message }));
+        });
+    });
   }, []);
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-600">Error: {error}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen text-gray-800 relative">
       <Background />
       <Header />
-
-      <main className="container mx-auto px-4 pt-20 pb-32">
-        <div className="max-w-4xl mx-auto text-center">
+      <main className="container mx-auto px-4 pt-10">
+        <div className="max-w-8xl mx-auto text-center">
           <Title />
-
-          {releaseData && (
-            <>
-              <VersionInfo
-                version={releaseData.version}
-                releaseDate={releaseData.releaseDate}
+          <div className="mt-12 grid gap-8 md:grid-cols-2">
+            {apps.map(app => (
+              <AppCard
+                key={app.id}
+                app={app}
+                release={releases[app.id]}
+                error={errors[app.id]}
               />
-              <div className="mb-16">
-                <DownloadButton asset={releaseData.defaultAsset} />
-              </div>
-            </>
-          )}
+            ))}
+          </div>
         </div>
       </main>
     </div>

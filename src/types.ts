@@ -12,3 +12,10 @@ export interface ReleaseData {
   assets: PlatformAsset[];
   defaultAsset: PlatformAsset;
 }
+
+export interface AppConfig {
+  id: string;
+  name: string;
+  description: string;
+  repo: string;
+}
